@@ -1,0 +1,10 @@
+{
+  "name": "unitech-landing",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static MVP landing for Unitech main page with legal pages.",
+  "scripts": {
+    "test": "node scripts/verify-static-site.mjs",
+    "build": "npm run test"
+  }
+}
