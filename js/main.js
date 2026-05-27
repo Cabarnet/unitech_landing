@@ -26,6 +26,7 @@ mNav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
 const pl=document.getElementById('preloader'),plLogo=document.getElementById('plLogo'),
       hdr=document.getElementById('header'),heroInner=document.getElementById('heroInner'),
       partners=document.getElementById('partners'),arcsEl=document.getElementById('heroArcs');
+let arcsActivated=false;
 
 const arcPD=[
   {d:'M43.4,47.7c-0.4,0-0.8,0-1.1-.4l-17.8-20.1c-2.1-2.5-1.9-6.2.5-8.3l1.2-1.2c1.1-1.1,2.8-1.5,4.3-1.5s3.1.8,4,1.9l8,9c.6.6.5,1.5-.2,2.1s-1.5.5-2.1-.2l-8-9c-0.5-0.5-1.3-0.8-2-1-0.8,0-1.5.2-2,.7l-1.2,1.3c-1.1,1.1-1.3,3-0.2,4.1l17.9,20.1c.6.6.5,1.5-.2,2.1-0.3,0.4-0.7,0.6-1.1,0.5h0Z',y:true,sz:80},
@@ -54,6 +55,7 @@ function buildArcs(){
     cv('--dur',(20+Math.random()*14)+'s');cv('--del',Math.random()*5+'s');
     arcsEl.appendChild(svg);
   }
+  if(arcsActivated)arcsEl.querySelectorAll('.arc').forEach(a=>a.classList.add('on'));
 }
 
 window.addEventListener('load',()=>{
@@ -62,6 +64,7 @@ window.addEventListener('load',()=>{
   setTimeout(()=>hdr.classList.add('visible'),2300);
   setTimeout(()=>{
     buildArcs();
+    arcsActivated=true;
     document.querySelectorAll('.arc').forEach((a,i)=>setTimeout(()=>a.classList.add('on'),i*250));
   },2800);
   setTimeout(()=>{
@@ -79,23 +82,45 @@ function initIO(){
   document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 }
 
-// ── Carousel buttons ──────────────────────────────────────────
+// ── Problems carousel ─────────────────────────────────────────
 document.querySelectorAll('.c-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const tr=document.getElementById(btn.dataset.track);
-    const card=tr.querySelector('.pb-card,.pj-card');
+    if(!tr)return;
+    const card=tr.querySelector('.pb-card');
     const w=card?(card.offsetWidth+16):360;
     tr.scrollBy({left:parseInt(btn.dataset.dir)*w,behavior:'smooth'});
   });
 });
 document.querySelectorAll('.c-track').forEach(tr=>{
   tr.addEventListener('keydown',e=>{
-    const card=tr.querySelector('.pb-card,.pj-card');
+    const card=tr.querySelector('.pb-card');
     const w=card?(card.offsetWidth+16):360;
     if(e.key==='ArrowRight')tr.scrollBy({left:w,behavior:'smooth'});
     if(e.key==='ArrowLeft')tr.scrollBy({left:-w,behavior:'smooth'});
   });
 });
+
+// ── Projects slideshow ────────────────────────────────────────
+(function(){
+  const slides=document.querySelectorAll('.pj-slide');
+  if(!slides.length)return;
+  let cur=0,timer;
+  function goTo(n){
+    slides[cur].classList.remove('active');
+    cur=(n+slides.length)%slides.length;
+    slides[cur].classList.add('active');
+  }
+  function startAuto(){timer=setInterval(()=>goTo(cur+1),6000)}
+  function resetAuto(){clearInterval(timer);startAuto()}
+  startAuto();
+  document.getElementById('pjPrev').addEventListener('click',()=>{goTo(cur-1);resetAuto()});
+  document.getElementById('pjNext').addEventListener('click',()=>{goTo(cur+1);resetAuto()});
+  document.querySelector('.pj-slider').addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'){goTo(cur+1);resetAuto()}
+    if(e.key==='ArrowLeft'){goTo(cur-1);resetAuto()}
+  });
+})();
 
 // ── Magnetic effect ───────────────────────────────────────────
 document.querySelectorAll('.mag').forEach(card=>{

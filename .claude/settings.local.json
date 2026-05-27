@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"f:\\\\OSPanel\\\\domains\\\\landing\\\\img\\\\\" | Where-Object { $_.Name -notmatch '^partners|^logo|^accred' } | Select-Object Name)"
+    ]
+  }
+}
